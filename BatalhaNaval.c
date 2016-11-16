@@ -5,6 +5,8 @@
 #include <ctype.h>
 #include <unistd.h>
 
+//Alteração feita para teste de novo branch: new_comment
+
 
 /* ############ ANOTAÇÕES DE VERSÃO ##################
 
