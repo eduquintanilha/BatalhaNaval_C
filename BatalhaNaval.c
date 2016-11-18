@@ -5,9 +5,6 @@
 #include <ctype.h>
 #include <unistd.h>
 
-//Alteração feita para teste de novo branch: new_comment
-// Alteração feita para teste com merge
-
 
 /* ############ ANOTAÇÕES DE VERSÃO ##################
 
@@ -95,7 +92,10 @@ typedef struct TamanhoTabuleiro{
 
 typedef struct PosicaoNavios{
 	char posicNavJogador[TAM_MATRIZ_TABULEIRO][TAM_MATRIZ_TABULEIRO];
+	int qtdNavJogador;
+
 	char posicNavComputador[TAM_MATRIZ_TABULEIRO][TAM_MATRIZ_TABULEIRO];
+	int qtdNavComputador;
 }POS_NAVIOS;
 
 typedef struct TabuleiroJogo{
@@ -117,17 +117,63 @@ typedef struct Computador{
 
 
 //############  Protótipos de funções  ###########
-TAM_TABULEIRO RecebeTamanhoTabuleiro();
-TABULEIRO_JOGO CriarTabuleiroJogo(TAM_TABULEIRO TAMTAB);
+TAM_TABULEIRO RecebeTamanhoTabuleiro();// pede o tamanho do tabuleiro para o usuario(Jogador) escolher
+TABULEIRO_JOGO CriarTabuleiroJogo(TAM_TABULEIRO TAMTAB);// Cria o tabuleiro do jogo de acordo com o tamanho escolhido
 POS_NAVIOS LimpaTabuleiro(TAM_TABULEIRO TAMTAB); //Limpa a matriz tabuleiro e adiciona ondas no campo de batalha.
 
-POS_NAVIOS PosicaoNaviosComputador(TAM_TABULEIRO TAMTAB);
-void ExibirTabuleiroComputador(TAM_TABULEIRO TT, POS_NAVIOS PN);
+POS_NAVIOS PosicaoNaviosComputador(TAM_TABULEIRO TAMTAB);//gera a quantidade e a posição dos navios do tabuleiro do computador aleatoriamente
+void ExibirTabuleiroComputador(TAM_TABULEIRO TT, POS_NAVIOS PN);// exibe o tabuleiro do Computador
 
 POS_NAVIOS PosicaoNaviosJogador(TAM_TABULEIRO TAMTAB); //função que pega as posições dos navios do jogador e retorna uma struct POSIÇÃO.
-void ExibirTabuleiroJogador(TAM_TABULEIRO TT, POS_NAVIOS PN);
+void ExibirTabuleiroJogador(TAM_TABULEIRO TT, POS_NAVIOS PN);// exibe o tabuleiro do Jogador
+
+//---------- 17/11/2016 fazendo
+void ExibirTabuleiroVazio(TAM_TABULEIRO TT, POS_NAVIOS PN);
+
+void TurnosAtaques(TAM_TABULEIRO TT, POS_NAVIOS PN);
+
+POS_NAVIOS AtaqueJogador(POS_NAVIOS PN);
+JOGADOR VerificaAtaqueAoJogador(POS_NAVIOS PN);
 
 //------------------------------------------------//
+
+//######## TURNOS DE ATAQUE ##############
+
+void TurnosAtaques(TAM_TABULEIRO TT, POS_NAVIOS PN, COMPUTADOR CP, JOGADOR JG){
+	int linha = TT.linhas;
+	int coluna = TT.colunas;
+
+	int qtdNavJogador = PN.qtdNavJogador;
+	int qtdNavComputador = PN.qtdNavComputador;
+
+	int JG.vidas = qtdNavJogador;//define quantidade de vidas na struct Jogador
+	int CP.vidas = qtdNavComputador;//define quantidade de vidas na struct Computador
+
+	int Jog_atk_l;
+	int Jog atk_c;
+
+	int Comp_atk_l;
+	int Comp_atk_c;
+	//--------------------------
+
+	do{
+		printf("\n\tDigite a posição de \n");
+
+
+	}while(JG.vidas > 0 || CP.vidas > 0);
+
+
+	
+}
+
+//#####################################
+
+//######## Ataque do Jogador #######
+
+//--------------- 17/11/2016 - fazendo
+
+
+
 
 TAM_TABULEIRO RecebeTamanhoTabuleiro(){
 	TAM_TABULEIRO TT;
@@ -175,6 +221,8 @@ POS_NAVIOS LimpaTabuleiro(TAM_TABULEIRO TAMTAB){
 }//----------------------------------------------------------------------
 
 
+
+
 // ####################  GERA AS POSIÇÕES DOS NAVIOS DO COMPUTADOR ALEATORIAMENTE #########################
 POS_NAVIOS PosicaoNaviosComputador(TAM_TABULEIRO TAMTAB){
 	int max = TAMTAB.linhas;
@@ -195,6 +243,8 @@ POS_NAVIOS PosicaoNaviosComputador(TAM_TABULEIRO TAMTAB){
 	do{
 		qtdNavios = rand() % (maxQuantNav+1);
 	}while(qtdNavios < 1);
+
+	PN.qtdNavComputador = qtdNavios;//Adiciona a quantidade de navios do computador à Sruct Posicao Navios
 
 	for(i=0; i<qtdNavios; i++){
 
@@ -268,7 +318,9 @@ POS_NAVIOS PosicaoNaviosJogador(TAM_TABULEIRO TAMTAB){
 
 		if(quantidadeNavios < 1 || quantidadeNavios > maxNavios){
 			printf("\n\n\t| Erro!\n\tQuantidade inválida!\n\tDica: Se atente a quantidade mínima e máxima para os navios! :) |\n\n");
-		}		
+		}
+
+		PN.qtdNavJogador = quantidadeNavios;//Adiciona a quantidade de navios escolhido a Struct Posicao Navios		
 		
 	}while(verificaDigito == 0 || (quantidadeNavios < 1 || quantidadeNavios > maxNavios));
 	//-------------------------------------------------------------------
@@ -415,6 +467,7 @@ void main(){
 	PN_JOG = PosicaoNaviosJogador(TT);
 
 	PN_COMP = PosicaoNaviosComputador(TT);
+
 
 
 
