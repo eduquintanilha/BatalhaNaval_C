@@ -90,6 +90,11 @@ typedef struct TamanhoTabuleiro{
 		colunas;
 }TAM_TABULEIRO;
 
+typedef struct Posicoes{
+	int pos_linha;
+	int pos_coluna;
+}POSICOES;
+
 typedef struct PosicaoNavios{
 	char posicNavJogador[TAM_MATRIZ_TABULEIRO][TAM_MATRIZ_TABULEIRO];
 	int qtdNavJogador;
@@ -121,19 +126,24 @@ TAM_TABULEIRO RecebeTamanhoTabuleiro();// pede o tamanho do tabuleiro para o usu
 TABULEIRO_JOGO CriarTabuleiroJogo(TAM_TABULEIRO TAMTAB);// Cria o tabuleiro do jogo de acordo com o tamanho escolhido
 POS_NAVIOS LimpaTabuleiro(TAM_TABULEIRO TAMTAB); //Limpa a matriz tabuleiro e adiciona ondas no campo de batalha.
 
+POSICOES EscolhePosicao(TAM_TABULEIRO TAMTAB);
+
 POS_NAVIOS PosicaoNaviosComputador(TAM_TABULEIRO TAMTAB);//gera a quantidade e a posição dos navios do tabuleiro do computador aleatoriamente
 void ExibirTabuleiroComputador(TAM_TABULEIRO TT, POS_NAVIOS PN);// exibe o tabuleiro do Computador
 
 POS_NAVIOS PosicaoNaviosJogador(TAM_TABULEIRO TAMTAB); //função que pega as posições dos navios do jogador e retorna uma struct POSIÇÃO.
 void ExibirTabuleiroJogador(TAM_TABULEIRO TT, POS_NAVIOS PN);// exibe o tabuleiro do Jogador
 
-//---------- 17/11/2016 fazendo
-void ExibirTabuleiroVazio(TAM_TABULEIRO TT, POS_NAVIOS PN);
 
-void TurnosAtaques(TAM_TABULEIRO TT, POS_NAVIOS PN);
+void ExibirTabuleiroVazio(TAM_TABULEIRO TT);
+
+void TurnosAtaques(TAM_TABULEIRO TT, POS_NAVIOS PN, COMPUTADOR CP, JOGADOR JG);
 
 POS_NAVIOS AtaqueJogador(POS_NAVIOS PN);
-JOGADOR VerificaAtaqueAoJogador(POS_NAVIOS PN);
+POS_NAVIOS AtaqueComputador(POS_NAVIOS PN);
+
+JOGADOR VerificaDanoJogador(POS_NAVIOS PN);
+COMPUTADOR VerificaDanoComputador(POS_NAVIOS PN);
 
 //------------------------------------------------//
 
@@ -146,18 +156,18 @@ void TurnosAtaques(TAM_TABULEIRO TT, POS_NAVIOS PN, COMPUTADOR CP, JOGADOR JG){
 	int qtdNavJogador = PN.qtdNavJogador;
 	int qtdNavComputador = PN.qtdNavComputador;
 
-	int JG.vidas = qtdNavJogador;//define quantidade de vidas na struct Jogador
-	int CP.vidas = qtdNavComputador;//define quantidade de vidas na struct Computador
+	JG.vidas = qtdNavJogador;//define quantidade de vidas na struct Jogador
+	CP.vidas = qtdNavComputador;//define quantidade de vidas na struct Computador
 
 	int Jog_atk_l;
-	int Jog atk_c;
+	int Jog_atk_c;
 
 	int Comp_atk_l;
 	int Comp_atk_c;
 	//--------------------------
 
 	do{
-		printf("\n\tDigite a posição de \n");
+		
 
 
 	}while(JG.vidas > 0 || CP.vidas > 0);
@@ -169,10 +179,14 @@ void TurnosAtaques(TAM_TABULEIRO TT, POS_NAVIOS PN, COMPUTADOR CP, JOGADOR JG){
 //#####################################
 
 //######## Ataque do Jogador #######
+POS_NAVIOS AtaqueJogador(POS_NAVIOS PN){
+	printf("\n\tDigite a posição de linha para o ataque\n");
+}
 
-//--------------- 17/11/2016 - fazendo
+//###### Ataque do Computador ######
+POS_NAVIOS AtaqueComputador(POS_NAVIOS PN){
 
-
+}
 
 
 TAM_TABULEIRO RecebeTamanhoTabuleiro(){
@@ -222,6 +236,92 @@ POS_NAVIOS LimpaTabuleiro(TAM_TABULEIRO TAMTAB){
 
 
 
+/*#####################################################################################################
+- FUNÇÃO CRIADA PARA OTIMIZAR O CÓDIGO, POIS SERÁ USADO MAIS
+  DE UMA VEZ NO JOGO.
+- A FUNÇÃO TEM COMO OBJETIVO RETORNAR UMA STRUCT POSICOES(LINHA,COLUNA)
+  QUE O USUÁRIO ESCOLHER DO TABULEIRO.
+ -> A FUNÇÃO PODE SER USADA PARA ESCOLHER AS POSIÇÕES DOS
+ 	NAVIOS ESCONDIDOS NO TABULEIRO, OU PARA ATACAR UMA POSIÇÃO.
+
+#######################################################################################################*/
+
+POSICOES EscolhePosicao(TAM_TABULEIRO TAMTAB){
+
+	char linha;
+	char maxLinha='A';
+	int linhaINT;
+	char contLinha;
+	int coluna;
+	int lin = TAMTAB.linhas;
+	int col = TAMTAB.colunas;
+	int i,j;
+	int maxNavios = lin/2;
+	
+
+	int verificaDigito;
+
+	POS_NAVIOS PN;   //Struct do tipo Posição dos Navios
+	PN.posicNavJogador[lin][col];  //Define o tamanho da matriz
+
+
+	maxLinha='A';
+	for(i=0; i<(lin-1); i++){
+	maxLinha++;
+	}
+
+	maxLinha = (int)maxLinha;
+
+
+do{//Recebe posição de linha
+
+			//system("clear || cls");
+
+			//ExibirTabuleiroJogador(TAMTAB, PN);
+
+			printf("\n\tDigite a Linha para a posição do navio.\n\tDigite apenas letras.\n\tExemplo: Linha 3 = C\n\t>> ");
+			linha = getchar( );
+
+			linha = toupper(linha);
+
+			linhaINT = (int)linha;
+			
+			
+			if((linhaINT != 10) && (linhaINT <= 64 || linhaINT > maxLinha))
+				printf("\n\n\t| Erro!\n\tValor inválido para linhas.\n\tDica: Se atente para a quantidade de linhas do campo de batalha! :) |\n\n");			
+			
+		}while(linhaINT <= 64 || linhaINT > maxLinha);
+
+
+		do{//Recebe posição de coluna
+			printf("\n\tDigite a Coluna para a posição do navio.\n\tDigite apenas números de 1 a %d.\n\t>> ",col);
+			scanf("%d",&coluna);
+
+			if(coluna < 1 || coluna > col){
+				printf("\n\n\t| Erro!\n\tValor inválido para coluna.\n\tDica: Se atente para a quantidade de colunas do campo de batalha! :) |\n\n");
+			}
+
+		}while(coluna < 1 || coluna > col);
+
+		//Contador para achar o valor inteiro da posição de linha que é inserida em letras pelo Jogador.
+		//Ex: C = 2; D = 3;
+		linhaINT=0;
+		for(contLinha='A'; contLinha<linha; contLinha++){
+			linhaINT++;
+		}
+		//-----------------------------------
+
+		coluna = coluna-1;//Subtrai 1 da coluna, pois na matriz inicia em '0' e não em '1';
+
+		POSICOES POS;
+		POS.pos_linha = linhaINT;
+		POS.pos_coluna = coluna;
+
+		return(POS);
+	}
+//-----------------------------------------------------------------------------------
+
+
 
 // ####################  GERA AS POSIÇÕES DOS NAVIOS DO COMPUTADOR ALEATORIAMENTE #########################
 POS_NAVIOS PosicaoNaviosComputador(TAM_TABULEIRO TAMTAB){
@@ -233,10 +333,8 @@ POS_NAVIOS PosicaoNaviosComputador(TAM_TABULEIRO TAMTAB){
 
 	POS_NAVIOS PN;
 
-
 	PN = LimpaTabuleiro(TAMTAB); //Limpa Tabuleiro de posição dos navios,
 													//retirando os lixos de memoria da matriz POSIÇÃONAVIOSCOMPUTADOR
-
 
 	//gerando a quantidade de navios, sendo
 	// a quantidade máxima = metade da quantidade de linhas do campo
@@ -255,7 +353,7 @@ POS_NAVIOS PosicaoNaviosComputador(TAM_TABULEIRO TAMTAB){
 		}while(pos_linha < 0 || pos_linha > max);
 		//----------------
 
-		printf("\n|DEBUG|\nNavio %d\nLinha > %d\n",i+1,pos_linha+1);//DEBUG
+		//printf("\n|DEBUG|\nNavio %d\nLinha > %d\n",i+1,pos_linha+1);//DEBUG
 
 		//gerando posição de coluna para os navios
 		do{
@@ -264,13 +362,13 @@ POS_NAVIOS PosicaoNaviosComputador(TAM_TABULEIRO TAMTAB){
 		}while(pos_coluna < 0 || pos_coluna > max);
 		//---------------
 
-		printf("\n|DEBUG|\nNavio %d\nColuna > %d\n",i+1,pos_coluna+1);//DEBUG
+		//printf("\n|DEBUG|\nNavio %d\nColuna > %d\n",i+1,pos_coluna+1);//DEBUG
 
 
 		PN.posicNavComputador[pos_linha][pos_coluna] = '#';//ADICIONANDO OS NAVIOS NAS POSIÇÕES DA MATRIZ
 	}//------- FIM DO FOR ---------
 
-	ExibirTabuleiroComputador(TAMTAB, PN);
+	//ExibirTabuleiroComputador(TAMTAB, PN);
 
 	return(PN);
 }//-------------------------------- FIM DA FUNÇÃO POSICAONAVIOSCOMPUTADOR() ---------------------------------------
@@ -291,6 +389,9 @@ POS_NAVIOS PosicaoNaviosJogador(TAM_TABULEIRO TAMTAB){
 	int quantidadeNavios = 0;
 
 	int verificaDigito;
+
+	POSICOES POS;
+
 
 	POS_NAVIOS PN;   //Struct do tipo Posição dos Navios
 	PN.posicNavJogador[lin][col];  //Define o tamanho da matriz
@@ -324,70 +425,21 @@ POS_NAVIOS PosicaoNaviosJogador(TAM_TABULEIRO TAMTAB){
 		
 	}while(verificaDigito == 0 || (quantidadeNavios < 1 || quantidadeNavios > maxNavios));
 	//-------------------------------------------------------------------
-	//Calcula o limite de linhas em letra de acordo com a quantidade de linhas do tabuleiro
-	maxLinha='A';
-	for(i=0; i<(lin-1); i++){
-	maxLinha++;
+	
+	for(i=0; i<quantidadeNavios; i++){
+		
+		printf("\n\t-------------- NAVIO %d --------------\n\n",i+1);
+		
+		//ExibirTabuleiroVazio(TAMTAB);
+		POS = EscolhePosicao(TAMTAB);//funçao que pede a linha e a coluna da posicao para o jogador
+
+		
+		//system("cls || clear");
+		printf("\n\t----------------------------\n");
+		PN.posicNavJogador[POS.pos_linha][POS.pos_coluna] = '#';
+		ExibirTabuleiroJogador(TAMTAB,PN);
 	}
 
-	maxLinha = (int)maxLinha;
-
-
-	
-	//Pede a posição de linha para os navios do jogador de acordo com a quantidade escolhida.
-	//Também converte a entrada de letra para int para adicionar o navio na posição correta da matriz.
-	//Letras em ASCII >> A=65 - H=72
-	for(i=0; i<quantidadeNavios; i++){
-
-		
-		
-		do{//Recebe posição de linha
-
-			printf("\n\tlinhaINT = %d || maxLinha = %d\n",linhaINT,maxLinha );
-
-			system("clear || cls");
-
-			ExibirTabuleiroJogador(TAMTAB, PN);
-
-			printf("\n\tDigite a linha para a posição do %dº navio.\n\tDigite apenas letras.\n\tExemplo: Linha 3 = C\n\t>> ",i+1);
-			linha = getchar( );
-
-			linha = toupper(linha);
-
-			linhaINT = (int)linha;
-			
-			
-			if((linhaINT != 10) && (linhaINT <= 64 || linhaINT > maxLinha))
-				printf("\n\n\t| Erro!\n\tValor inválido para linhas.\n\tDica: Se atente para a quantidade de linhas do campo de batalha! :) |\n\n");			
-			
-		}while(linhaINT <= 64 || linhaINT > maxLinha);
-
-
-
-		do{//Recebe posição de coluna
-			printf("\n\tDigite a coluna para a posição do %dº navio.\n\tDigite apenas números de 1 a %d.\n\t>> ",i+1,col);
-			scanf("%d",&coluna);
-
-			if(coluna < 1 || coluna > col){
-				printf("\n\n\t| Erro!\n\tValor inválido para coluna.\n\tDica: Se atente para a quantidade de colunas do campo de batalha! :) |\n\n");
-			}
-
-		}while(coluna < 1 || coluna > col);
-
-		//Contador para achar o valor inteiro da posição de linha que é inserida em letras pelo Jogador.
-		//Ex: C = 2; D = 3;
-		linhaINT=0;
-		for(contLinha='A'; contLinha<linha; contLinha++){
-			linhaINT++;
-		}
-		//-----------------------------------
-
-		coluna = coluna-1;//Subtrai 1 da coluna, pois na matriz inicia em '0' e não em '1';
-
-		PN.posicNavJogador[linhaINT][coluna] = '#';  //Adiciona o navio '#' nas posições informadas pelo Jogador
-		
-	}//------------- FIM DO FOR DE POSIÇÃO DOS NAVIOS DO JOGADOR ---------------------------
-	
 	return(PN);
 }//---------------------- FIM DA FUNÇÃO POSIÇÃOJOGADOR() -------------------------------------------------------------------
 
@@ -400,7 +452,34 @@ TABULEIRO_JOGO CriarTabuleiroJogo(TAM_TABULEIRO TAMTAB){
 }*/
 
 
-//###################### FUNÇÕES DE EXIBIÇÃO DO TABULEIRO #################3
+//###################### FUNÇÕES DE EXIBIÇÃO DO TABULEIRO #################
+
+void ExibirTabuleiroVazio(TAM_TABULEIRO TT){
+	int i,j,
+		l,c;
+	char let='A';
+	
+	l = TT.linhas;
+	c = TT.colunas;	
+
+	
+	printf("\n\n");
+	
+	for(i=0; i<c; i++){
+		printf("\t%d",i+1);
+	}
+	printf("\n\n");
+	for(i=0; i<l; i++){
+		printf("  %c",let);
+		let++;
+		for(j=0; j<c; j++){
+			printf("\t~");
+		}
+		printf("\n\n\n");
+	}
+}//----------------------------------------------
+
+
 void ExibirTabuleiroJogador(TAM_TABULEIRO TT, POS_NAVIOS PN){
 	int i,j,
 		l,c;
